@@ -62,7 +62,10 @@ class GDAnswers:
         return True
 
     def load_data(self, nrows=None):
-        """Return a list of answers of the question.
+        """Return a list of answers of a question of the grand debat.
+        The question is 'Que pensez-vous de l'organisation de l'Etat et
+        des administrations en France ?'
+
         Returns
         -------
            ans (list of string): each element of the list is a document
