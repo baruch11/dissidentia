@@ -15,12 +15,15 @@ Rentre dans ce critère tout ce qui est outrancier, haineux, ou calomnieux (c-a-
 **exemples** : 
 "Tous pourris !" (outrance), "Les fonctionnaires ne recrutent que par copinage" (grosse généralité sans preuve)
 "supprimer commissions qui servent à rien" (agacement, supposition inutilité)
-"incompétences des fonctionnaires" (grosse généralité)
+"incompétences des fonctionnaires" (grosse généralité infondée)
+"suppression du senat"
 
 **contre-exemples** : 
 "Il faut réduire le mille feuille administratif"
 "Il simplifier le système", 
 "A mon avis les fonctionnaires sont trop nombreux" (critique pas forcement justifiée mais pas outrancière)
+"Trop de députés, ministres"
+"La cour des comptes a souvent épinglé cette gabegie financière mais rien n’est fait !" (s'appuie sur un avis d'une organisation légitime)
 
 
 ### Cible
@@ -45,7 +48,7 @@ S'il y a plusieurs phrases (le split en phrases a mal fonctionné) et au moins l
 S'il y a un seul mot ou une phrase très courte, on considère que ça se rapporte à la question "Que pensez vous de l'organisation de l'Etat"
 
 **non dissident**
-Propos qui ne vérifie pas l'unde des 2 conditions (cible, véhémence). Par exemple une critique modérée, argumentée de l'Etat. 
+Propos qui ne vérifie pas l'une des 2 conditions (cible, véhémence). Par exemple une critique modérée, argumentée de l'Etat. 
 Ou alors une phrase hors sujet par rapport à la question (par ex. situation personnelle)
 
 **inclassable**:
