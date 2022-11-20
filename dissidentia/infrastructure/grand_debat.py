@@ -72,7 +72,6 @@ class GDAnswers:
            representing one citizen answer
         """
         self.import_data()
-        ans = pd.read_csv(self.csv_file, nrows=nrows, usecols=self.QUESTIONS)\
-                .dropna().iloc[:, 0].values
+        ans = pd.read_csv(self.csv_file, nrows=nrows).set_index("id")
 
-        return ans
+        return ans[self.QUESTIONS[0]]
