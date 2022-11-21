@@ -16,13 +16,16 @@ PARSER = argparse.ArgumentParser(
     description='Compute training from a csv file')
 PARSER.add_argument('--debug', '-d', action='store_true',
                     help='activate debug logs')
+PARSER.add_argument('--doccano', '-dc', action='store_true',
+                    help='activate debug logs')
 
 args = PARSER.parse_args()
 
 if args.debug:
     logging.getLogger().setLevel(logging.DEBUG)
 
-X_train, X_test, y_train, y_test = get_train_test_split()
+X_train, X_test, y_train, y_test = get_train_test_split(
+    from_doccano=args.doccano)
 model = baselineModel()
 model.fit(X_train, y_train)
 
