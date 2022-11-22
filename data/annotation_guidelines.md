@@ -22,7 +22,7 @@ Rentre dans ce critère tout ce qui est outrancier, haineux, ou calomnieux (c-a-
 "Il faut réduire le mille feuille administratif"
 "Il simplifier le système", 
 "A mon avis les fonctionnaires sont trop nombreux" (critique pas forcement justifiée mais pas outrancière)
-"Trop de députés, ministres"
+"Trop de députés, ministres. Il y a souvent du copinage !" (usage du terme 'trop' ou 'souvent' plus modéré que 'toujours', 'tous')
 "La cour des comptes a souvent épinglé cette gabegie financière mais rien n’est fait !" (s'appuie sur un avis d'une organisation légitime)
 
 
