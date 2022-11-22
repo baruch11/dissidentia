@@ -31,8 +31,11 @@ class DoccanoDataset:
                 self.project_id = project.id
         assert self.project_id is not None
 
-    def load_data(self):
+    def load_data(self, only_approved=True):
         """Load all the approved examples of dissidentia doccano dataset
+        Parameters
+        ----------
+            only_approved (bool): load only approved sentences
         Returns
         -------
             dataset (pd.DataFrame): doccano dataset, with a least the columns
@@ -42,7 +45,7 @@ class DoccanoDataset:
         with tempfile.TemporaryDirectory() as tmpdirname:
             path_to_zip_file = self.client.download(self.project_id,
                                                     format="CSV",
-                                                    only_approved=True,
+                                                    only_approved=only_approved,
                                                     dir_name=tmpdirname)
 
             with zipfile.ZipFile(str(path_to_zip_file), 'r') as zip_ref:
