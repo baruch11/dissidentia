@@ -6,7 +6,8 @@ import argparse
 import pandas as pd
 
 
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import (accuracy_score, f1_score, precision_score,
+                             recall_score)
 from dissidentia.domain.baseline_model import baselineModel
 from dissidentia.infrastructure.dataset import get_train_test_split
 from dissidentia.domain.model_wrapper import DissidentModelWrapper
@@ -18,6 +19,8 @@ PARSER.add_argument('--debug', '-d', action='store_true',
                     help='activate debug logs')
 PARSER.add_argument('--doccano', '-dc', action='store_true',
                     help='activate debug logs')
+PARSER.add_argument('--save_model', '-s', action='store_true',
+                    help='save model in a pickle')
 
 args = PARSER.parse_args()
 
@@ -33,7 +36,7 @@ model.fit(X_train, y_train)
 y_pred_test = model.predict(X_test)
 y_pred_train = model.predict(X_train)
 
-metrics = [accuracy_score, f1_score]
+metrics = [accuracy_score, f1_score, precision_score, recall_score]
 
 perfs = pd.DataFrame(
     {metric.__name__: {"train": metric(y_train, y_pred_train),
@@ -44,4 +47,5 @@ with pd.option_context('display.float_format', '{:0.2f}'.format):
     print(f"Performances:\n{perfs}")
 
 # save model
-DissidentModelWrapper(model).save()
+if args.save_model:
+    DissidentModelWrapper(model).save()
