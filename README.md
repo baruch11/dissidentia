@@ -1,4 +1,7 @@
 # DissidentIA
+![scheme](data/images/dissidentIA.png?raw=true "")
+
+
 
 ## Description
 Detect political dissidents from the answers of the Grand Débat
