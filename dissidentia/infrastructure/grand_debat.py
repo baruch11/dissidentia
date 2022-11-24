@@ -7,6 +7,8 @@ import hashlib
 import wget
 import pandas as pd
 
+from dissidentia.infrastructure.sentencizer import sentencize
+
 
 def get_rootdir():
     """Return rootdir absolute path"""
@@ -68,11 +70,35 @@ class GDAnswers:
 
         Returns
         -------
-           ans (list of string): each element of the list is a document
+           ans (pd.Series): each element of the Series is a document
            representing one citizen answer
         """
         self.import_data()
-        ans = pd.read_csv(self.csv_file, nrows=nrows, usecols=self.QUESTIONS)\
-                .dropna().iloc[:, 0].values
+        ans = pd.read_csv(self.csv_file, nrows=nrows).set_index("id")
 
-        return ans
+        return ans[self.QUESTIONS[0]]
+
+    def load_sentences(self, nanswers=None):
+        """ Return sentences extracted of answers to the question of
+        the grand debat: 'Que pensez-vous de l'organisation de l'Etat et
+        des administrations en France ?'
+        Parameters
+        ----------
+            nanswers (int): if not None, take the n first answers of the
+                dataset
+        Returns
+        -------
+            sentences (pd.DataFrame): 3 columns ['test',
+                'question_id' (id of the answer), 'sent_id' (index of the
+                sentence inside the whole answer)]
+        """
+        answers = self.load_data(nanswers).dropna()
+        print(f"Loaded {len(answers)} answers")
+
+        sentences = answers.apply(sentencize)
+        sentences = pd.concat([
+            sentences.explode().rename("text"),
+            sentences.apply(lambda x: list(range(len(x))))
+                     .explode().rename("sent_id")
+        ], axis=1).reset_index().rename(columns={"id": "question_id"})
+        return sentences

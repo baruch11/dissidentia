@@ -1,14 +1,16 @@
 """Unit tests for infrastucture"""
 from dissidentia.infrastructure.grand_debat import GDAnswers
 from dissidentia.infrastructure.sentencizer import sentencize
+from dissidentia.infrastructure.doccano import DoccanoDataset
 
-def test_import():
-    """test data importation"""
+
+def test_import_gd_answers():
+    """test data importation from grand debat site"""
     GDAnswers().import_data()
 
 
-def test_load():
-    """test load 10 documents"""
+def test_load_gd_answers():
+    """test load 10 documents from grand debat"""
     gdans = GDAnswers()
     print()
     print(f"Selected quesion(s): {gdans.QUESTIONS}")
@@ -30,3 +32,12 @@ def test_sentencize():
         sents = sentencize(text)
         print(sents)
         assert len(sents) == nb_sents
+
+
+def test_doccano():
+    """ test load train test from doccano """
+    dds = DoccanoDataset()
+    df = dds.load_data()
+    print(f"labels:\n{df.label.value_counts()}")
+    assert all(col in df.columns
+               for col in ["label", "text", "question_id", "sent_id"])
