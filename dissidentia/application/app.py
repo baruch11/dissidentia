@@ -1,12 +1,16 @@
 
 import sys
+import os
 import warnings
 import pandas as pd
 import streamlit as st
+from lime.lime_text import LimeTextExplainer
+import streamlit.components.v1 as components
 
 import warnings
 
 from dissidentia.domain.model_wrapper import DissidentModelWrapper
+from dissidentia.infrastructure.grand_debat import get_rootdir
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -34,9 +38,12 @@ class Application:
 def results_page(file_model= 'baselineModel'):
     """ The main page of the application """
     st.set_page_config(layout="wide")
-    st.markdown("# Projet 2")
-    st.markdown("### Proposition d'une application")
-    st.markdown("**Créée par Charles, Amir et Moindzé**")
+    left_col, right_col = st.columns(2)
+    left_col.image(os.path.join(get_rootdir(), "data/images/dissidentIA.png"))
+
+    right_col.markdown("# Projet 2")
+    right_col.markdown("### Proposition d'une application")
+    right_col.markdown("**Créée par Charles, Amir et Moindzé**")
 
     st.markdown("---")
 
@@ -74,6 +81,15 @@ def results_page(file_model= 'baselineModel'):
         
         st.markdown("##### Prédictions")
         st.table(df)
+        #explain_pred = st.checkbox('Explication des prédictions')
+        st.markdown("##### Explication des prédictions")
+        #if explain_pred:
+        with st.spinner('Generating explanations'):
+            explainer = LimeTextExplainer(class_names= model.model.classes_)
+            for j in range(len(result)):
+                text = result[j][0]
+                exp = explainer.explain_instance(text, model.model.predict_proba, num_features=6)
+                components.html(exp.as_html(), height=320)
 
 if __name__ == '__main__':
     app = Application()
