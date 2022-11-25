@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "dissidentia"
+version = "0.1.0"
+description = "Detect political dissidents from the answers of the Grand Débat"
+authors = ["Amir, Moindzé, Charles"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.23.4"
+pandas = "^1.5.1"
+nltk = "^3.7"
+streamlit = "^1.0"
+wget = "^3.2"
+scikit-learn = "^1.1.3"
+transformers = "^4.24.0"
+datasets = "^2.7.0"
+doccano-client = "^1.2.6"
+black = "^22.10.0"
+jupyter = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
