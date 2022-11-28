@@ -1,3 +1,4 @@
 /data/answers.csv
 __pycache__
 /notebooks/.ipynb_checkpoints/
+/poetry.lock
