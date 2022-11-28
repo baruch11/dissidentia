@@ -27,6 +27,8 @@ PARSER.add_argument('--save_model', '-s', action='store_true',
                     help='save model in a pickle')
 PARSER.add_argument('--model', '-m', default=MODELS[0].__name__,
                     help=f'model_name in ({MODEL_NAMES})')
+PARSER.add_argument('--no_fit', '-n', action='store_true',
+                    help='just load and evaluate the model')
 
 args = PARSER.parse_args()
 
@@ -40,8 +42,11 @@ for constructor in MODELS:
     if args.model == constructor.__name__:
         break
 
-model = constructor()
-model.fit(X_train, y_train)
+if args.no_fit:
+    model = DissidentModelWrapper.load(args.model).model
+else:
+    model = constructor()
+    model.fit(X_train, y_train)
 
 
 y_pred_test = model.predict(X_test)
