@@ -19,7 +19,6 @@ doccano-client = "^1.2.6"
 black = "^22.10.0"
 jupyter = "^1.0.0"
 lime = "^0.2.0.1"
-nvidia-cublas-cu11 = "^11.10"
 poethepoet = "^0.16.4"
 
 torch = {version="^1.11.0"}
