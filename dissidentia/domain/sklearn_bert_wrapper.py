@@ -252,7 +252,7 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
         y_prob = self.predict_proba(x_test)
         y_pred = np.argmax(y_prob, axis=-1)
 
-        return y_pred
+        return y_pred.astype(bool)
 
     def evaluate(self):
         """ evaluate model for different metrics"""
