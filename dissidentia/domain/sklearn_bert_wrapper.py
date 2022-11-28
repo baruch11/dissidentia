@@ -62,13 +62,14 @@ class BaseBertTypeEstimator(BaseEstimator):
         learning_rate=3e-5,
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
-        num_train_epochs=5,
+        num_train_epochs=10,
         logging_first_step=True,
-        freezing=True,
+        freezing=False,
         weight_decay=0.,
         load_best_model_at_end=True,
         metric_for_best_model='f1',
         save_strategy="epoch",
+        val_dataset = None
     ):
 
         self.name_model = name_model
@@ -89,6 +90,7 @@ class BaseBertTypeEstimator(BaseEstimator):
         self.tokenizer = None
         self.trainer = None
         self.model = None
+        self.val_dataset = val_dataset
 
         self.args = TrainingArguments(
             output_dir=self.output_dir,
@@ -161,21 +163,21 @@ class BaseBertTypeEstimator(BaseEstimator):
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.name_model, use_fast=True)
 
-        _, x_val, _, y_val = get_train_test_split(from_doccano=False)
+        if self.val_dataset is None:
+            raise ValueError("Evaluation requires a val_dataset")
+        val = pd.concat([self.val_dataset[0], self.val_dataset[1]], axis=1)
+        val["labels"] = val['label'].map({True: 1, False: 0})
+        df_val = Dataset.from_pandas(val, preserve_index=False)
+        encoded_val = df_val.map(self._tokenize_batch, batched=True)
+        encoded_val = encoded_val.remove_columns(["text", "label"])
+        encoded_val.set_format("torch")
         train = pd.concat([x_train, y_train], axis=1)
-        val = pd.concat([x_val, y_val], axis=1)
         train["labels"] = train['label'].map(
             {True: 1, False: 0})
-        val["labels"] = val['label'].map({True: 1, False: 0})
         df_train = Dataset.from_pandas(train, preserve_index=False)
-        df_val = Dataset.from_pandas(val, preserve_index=False)
         encoded_train = df_train.map(self._tokenize_batch, batched=True)
-        encoded_val = df_val.map(self._tokenize_batch, batched=True)
-
         encoded_train = encoded_train.remove_columns(["text", "label"])
-        encoded_val = encoded_val.remove_columns(["text", "label"])
         encoded_train.set_format("torch")
-        encoded_val.set_format("torch")
 
         self.model = AutoModelForSequenceClassification.from_pretrained(
             self.name_model, num_labels=self.num_labels)
