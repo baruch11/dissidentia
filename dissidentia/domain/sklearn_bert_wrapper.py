@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import torch
+import logging
 
 from datasets import Dataset
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, TrainingArguments, Trainer, DataCollatorWithPadding
@@ -50,7 +51,7 @@ class BaseBertTypeEstimator(BaseEstimator):
 
     MODEL_NAME = 'camembert-base'
     LOG_DIR = os.path.join(get_rootdir(), "logs")
-    OUTPUT_DIR = os.path.join(get_rootdir(), "outputs")
+    OUTPUT_DIR = os.path.join(get_rootdir(), "data/outputs")
 
     def __init__(
         self,
@@ -88,7 +89,6 @@ class BaseBertTypeEstimator(BaseEstimator):
         self.load_best_model_at_end = load_best_model_at_end
         self.metric_for_best_model = metric_for_best_model
         self.tokenizer = None
-        self.trainer = None
         self.model = None
         self.val_dataset = val_dataset
 
@@ -108,6 +108,15 @@ class BaseBertTypeEstimator(BaseEstimator):
         )
 
         self._validate_hyperparameters()
+
+        self.model = AutoModelForSequenceClassification.from_pretrained(
+            self.name_model, num_labels=self.num_labels)
+        if self.freezing:
+            for param in self.model.base_model.parameters():
+                param.requires_grad = False
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.name_model, use_fast=True)
+
 
     def _validate_hyperparameters(self):
         """
@@ -160,8 +169,6 @@ class BaseBertTypeEstimator(BaseEstimator):
         # validate params
         self._validate_hyperparameters()
 
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            self.name_model, use_fast=True)
 
         if self.val_dataset is None:
             raise ValueError("Evaluation requires a val_dataset")
@@ -179,14 +186,9 @@ class BaseBertTypeEstimator(BaseEstimator):
         encoded_train = encoded_train.remove_columns(["text", "label"])
         encoded_train.set_format("torch")
 
-        self.model = AutoModelForSequenceClassification.from_pretrained(
-            self.name_model, num_labels=self.num_labels)
-        if self.freezing:
-            for param in self.model.base_model.parameters():
-                param.requires_grad = False
 
         data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
-        self.trainer = Trainer(
+        trainer = Trainer(
             self.model,
             self.args,
             train_dataset=encoded_train,
@@ -196,7 +198,7 @@ class BaseBertTypeEstimator(BaseEstimator):
             compute_metrics=self._compute_metrics
         )
 
-        self.trainer.train()
+        trainer.train()
 
         return self
 
@@ -230,7 +232,9 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
         encoded_test = encoded_test.remove_columns("text")
         encoded_test.set_format("torch")
 
-        out = self.trainer.predict(encoded_test)
+        trainer = Trainer(self.model, tokenizer=self.tokenizer)
+
+        out = trainer.predict(encoded_test)
         out_torch = torch.from_numpy(out.predictions)
         pred_prob = torch.softmax(out_torch , -1).squeeze()
 
@@ -258,7 +262,7 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
 
     def evaluate(self):
         """ evaluate model for different metrics"""
-        return self.trainer.evaluate()
+        return Trainer(self.model, tokenizer=self.tokenizer).evaluate()
 
     def _tokenize_batch(self, samples):
         return self.tokenizer(samples["text"], truncation=True)
