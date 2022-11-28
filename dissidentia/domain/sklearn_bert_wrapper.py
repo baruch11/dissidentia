@@ -1,8 +1,10 @@
+
 """Perform bert type model for dissident detection and wrappe it like scikit-learn"""
 import os
 import warnings
 import numpy as np
 import pandas as pd
+import torch
 
 from datasets import Dataset
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, TrainingArguments, Trainer, DataCollatorWithPadding
@@ -220,6 +222,18 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
         """
         check_is_fitted(self, ["model", "trainer"])
 
+        df_test = Dataset.from_pandas(
+            x_test.to_frame('text'), preserve_index=False)
+        encoded_test = df_test.map(self._tokenize_batch, batched=True)
+        encoded_test = encoded_test.remove_columns("text")
+        encoded_test.set_format("torch")
+
+        out = self.trainer.predict(encoded_test)
+        out_torch = torch.from_numpy(out.predictions)
+        pred_prob = torch.softmax(out_torch , -1).squeeze()
+
+        return pred_prob.numpy()
+
     def predict(self, x_test):
         """
         Predict most probable class.
@@ -235,14 +249,8 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
         """
         check_is_fitted(self, ["model", "trainer"])
 
-        df_test = Dataset.from_pandas(
-            x_test.to_frame('text'), preserve_index=False)
-        encoded_test = df_test.map(self._tokenize_batch, batched=True)
-        encoded_test = encoded_test.remove_columns("text")
-        encoded_test.set_format("torch")
-
-        out = self.trainer.predict(encoded_test)
-        y_pred = np.argmax(out.predictions, axis=-1)
+        y_prob = self.predict_proba(x_test)
+        y_pred = np.argmax(y_prob, axis=-1)
 
         return y_pred
 
