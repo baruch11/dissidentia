@@ -6,7 +6,11 @@ from sklearn.model_selection import RandomizedSearchCV
 from scipy.stats import uniform
 
 class baselineModel(RandomizedSearchCV):
-    """Baseline model for dissident detection"""
+    """Baseline model for dissident detection
+    Parameters
+    ----------
+    val_dataset: unused, API compatibility
+    """
     PARAM_DIST = {"lr__C": uniform(loc=1, scale=20),
                   "lr__penalty": ['l2', 'l1'],
                   'tfidf__max_df': uniform(loc=.8, scale=.2),
@@ -14,7 +18,7 @@ class baselineModel(RandomizedSearchCV):
                   }
 
 
-    def __init__(self):
+    def __init__(self, val_dataset=None):
         self.pipe = Pipeline([
             ('tfidf', TfidfVectorizer()),
             ('lr', LogisticRegression(solver='liblinear', class_weight='balanced',

@@ -45,7 +45,7 @@ for constructor in MODELS:
 if args.no_fit:
     model = DissidentModelWrapper.load(args.model).model
 else:
-    model = constructor()
+    model = constructor(val_dataset=(X_test, y_test))
     model.fit(X_train, y_train)
 
 
