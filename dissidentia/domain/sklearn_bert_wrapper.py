@@ -172,19 +172,10 @@ class BaseBertTypeEstimator(BaseEstimator):
 
         if self.val_dataset is None:
             raise ValueError("Evaluation requires a val_dataset")
-        val = pd.concat([self.val_dataset[0], self.val_dataset[1]], axis=1)
-        val["labels"] = val['label'].map({True: 1, False: 0})
-        df_val = Dataset.from_pandas(val, preserve_index=False)
-        encoded_val = df_val.map(self._tokenize_batch, batched=True)
-        encoded_val = encoded_val.remove_columns(["text", "label"])
-        encoded_val.set_format("torch")
-        train = pd.concat([x_train, y_train], axis=1)
-        train["labels"] = train['label'].map(
-            {True: 1, False: 0})
-        df_train = Dataset.from_pandas(train, preserve_index=False)
-        encoded_train = df_train.map(self._tokenize_batch, batched=True)
-        encoded_train = encoded_train.remove_columns(["text", "label"])
-        encoded_train.set_format("torch")
+
+        encoded_val = self._torch_encode(self.val_dataset[0],
+                                         self.val_dataset[1])
+        encoded_train = self._torch_encode(x_train, y_train)
 
 
         data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
@@ -205,6 +196,15 @@ class BaseBertTypeEstimator(BaseEstimator):
     def _tokenize_batch(self, samples):
         return self.tokenizer(samples["text"], truncation=True)
 
+    def _torch_encode(self, X, y):
+        val = pd.concat([X, y], axis=1)
+        val["labels"] = val['label'].map({True: 1, False: 0})
+        df_val = Dataset.from_pandas(val, preserve_index=False)
+        encoded_val = df_val.map(self._tokenize_batch, batched=True)
+        encoded_val = encoded_val.remove_columns(["text", "label"])
+        encoded_val.set_format("torch")
+        return encoded_val
+
 
 class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
     """
@@ -224,7 +224,7 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
             probability estimates for each class
 
         """
-        check_is_fitted(self, ["model", "trainer"])
+        check_is_fitted(self, ["model"])
 
         df_test = Dataset.from_pandas(
             x_test.to_frame('text'), preserve_index=False)
@@ -253,7 +253,7 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
             predicted class estimates
 
         """
-        check_is_fitted(self, ["model", "trainer"])
+        check_is_fitted(self, ["model"])
 
         y_prob = self.predict_proba(x_test)
         y_pred = np.argmax(y_prob, axis=-1)
@@ -262,7 +262,8 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
 
     def evaluate(self):
         """ evaluate model for different metrics"""
-        return Trainer(self.model, tokenizer=self.tokenizer).evaluate()
-
-    def _tokenize_batch(self, samples):
-        return self.tokenizer(samples["text"], truncation=True)
+        X, y = self.val_dataset
+        return Trainer(self.model,
+                       tokenizer=self.tokenizer,
+                       eval_dataset=self._torch_encode(X, y),
+                       ).evaluate()
