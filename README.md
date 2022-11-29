@@ -36,6 +36,12 @@ y_pred = model.predict(x_test)
 
 # make probabilty predictions
 y_pred = model.predict_proba(x_test)
+
+# save model
+model.load(save_path)
+
+# load model 
+new_model = model.load(save_path)
 ```
 ## Application
 
