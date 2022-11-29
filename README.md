@@ -26,7 +26,7 @@ A scikit-learn wrapper to fine-tuning Bert type model using huggingface Trainer 
 from dissidentia.domain.sklearn_bert_wrapper import BertTypeClassifier
 
 # define model with default parameters
-model = BertTypeClassifier() 
+model = BertTypeClassifier(val_dataset=(x_val, y_val)) 
 
 # fine-tuning model
 model.fit(x_train, y_train)
@@ -36,6 +36,9 @@ y_pred = model.predict(x_test)
 
 # make probabilty predictions
 y_pred = model.predict_proba(x_test)
+
+# evaluate model on val_dataset for different metrics
+model.evaluate() 
 
 # save model
 model.load(save_path)
