@@ -41,7 +41,7 @@ y_pred = model.predict_proba(x_test)
 model.evaluate() 
 
 # save model
-model.load(save_path)
+model.save(save_path)
 
 # load model 
 new_model = model.load(save_path)
