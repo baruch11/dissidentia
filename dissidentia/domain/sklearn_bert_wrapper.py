@@ -5,7 +5,6 @@ import warnings
 import numpy as np
 import pandas as pd
 import torch
-import logging
 
 from datasets import Dataset
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, TrainingArguments, Trainer, DataCollatorWithPadding
@@ -14,7 +13,6 @@ from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils.validation import check_is_fitted
 
-from dissidentia.infrastructure.dataset import get_train_test_split
 from dissidentia.infrastructure.grand_debat import get_rootdir
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
@@ -49,28 +47,27 @@ class BaseBertTypeEstimator(BaseEstimator):
 
     """
 
-    MODEL_NAME = 'camembert-base'
     LOG_DIR = os.path.join(get_rootdir(), "logs")
-    OUTPUT_DIR = os.path.join(get_rootdir(), "data/outputs")
+    OUTPUT_DIR = os.path.join(get_rootdir(), "data/")
 
     def __init__(
         self,
-        name_model=MODEL_NAME,
-        output_dir=OUTPUT_DIR,
-        logging_dir=LOG_DIR,
-        num_labels=2,
-        evaluation_strategy="epoch",
-        learning_rate=3e-5,
-        per_device_train_batch_size=16,
-        per_device_eval_batch_size=16,
-        num_train_epochs=10,
-        logging_first_step=True,
-        freezing=False,
-        weight_decay=0.,
-        load_best_model_at_end=True,
-        metric_for_best_model='f1',
-        save_strategy="epoch",
-        val_dataset = None
+        name_model: str ='camembert-base',
+        output_dir: str = OUTPUT_DIR,
+        logging_dir: str = LOG_DIR,
+        num_labels : int = 2,
+        evaluation_strategy : str = "epoch",
+        learning_rate: float = 3e-5,
+        per_device_train_batch_size: int = 16,
+        per_device_eval_batch_size: int = 16,
+        num_train_epochs: int = 10,
+        logging_first_step: bool = True,
+        freezing: bool = False,
+        weight_decay: float = 0.,
+        load_best_model_at_end : bool = True,
+        metric_for_best_model: str = 'f1',
+        save_strategy: str = "epoch",
+        val_dataset=None
     ):
 
         self.name_model = name_model
@@ -92,8 +89,8 @@ class BaseBertTypeEstimator(BaseEstimator):
         self.model = None
         self.val_dataset = val_dataset
 
-        self.args = TrainingArguments(
-            output_dir=self.output_dir,
+        self.train_args = TrainingArguments(
+            output_dir=f"{self.output_dir}{name_model}_finetuned",
             logging_dir=self.logging_dir,
             evaluation_strategy=self.evaluation_strategy,
             save_strategy=self.save_strategy,
@@ -116,7 +113,6 @@ class BaseBertTypeEstimator(BaseEstimator):
                 param.requires_grad = False
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.name_model, use_fast=True)
-
 
     def _validate_hyperparameters(self):
         """
@@ -169,7 +165,6 @@ class BaseBertTypeEstimator(BaseEstimator):
         # validate params
         self._validate_hyperparameters()
 
-
         if self.val_dataset is None:
             raise ValueError("Evaluation requires a val_dataset")
 
@@ -177,11 +172,10 @@ class BaseBertTypeEstimator(BaseEstimator):
                                          self.val_dataset[1])
         encoded_train = self._torch_encode(x_train, y_train)
 
-
         data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
         trainer = Trainer(
             self.model,
-            self.args,
+            args=self.train_args,
             train_dataset=encoded_train,
             eval_dataset=encoded_val,
             data_collator=data_collator,
@@ -236,7 +230,7 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
 
         out = trainer.predict(encoded_test)
         out_torch = torch.from_numpy(out.predictions)
-        pred_prob = torch.softmax(out_torch , -1).squeeze()
+        pred_prob = torch.softmax(out_torch, -1).squeeze()
 
         return pred_prob.numpy()
 
