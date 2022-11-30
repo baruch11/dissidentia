@@ -267,3 +267,22 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
                        tokenizer=self.tokenizer,
                        eval_dataset=self._torch_encode(X, y),
                        ).evaluate()
+
+    @classmethod
+    def load(cls, load_path):
+        """Load BertTypeClassifier model
+        Parameters
+        ----------
+        load_path (str): path of the model directory
+        """
+        return BertTypeClassifier(name_model=load_path)
+
+    def save(self, save_path):
+        """Save BertTypeClassifier model
+        Parameters
+        ----------
+        save_path (str): path of the directory where to save the model
+        """
+        self.model.save_pretrained(save_path)
+        self.tokenizer.save_pretrained(save_path)
+

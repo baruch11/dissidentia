@@ -17,6 +17,18 @@ Then use the *-doccano* option in train.py command line.
 
 `python dissidentia/application/train.py --doccano`
 
+
+## Tests
+
+```
+# unit tests
+pytest
+
+# test camembert model fit/predict/save/load methods on few samples
+pytest -o python_functions="camembert_*" -s
+```
+
+
 ## Authors and acknowledgment
 Amir, Moindzé, Charles  
 
