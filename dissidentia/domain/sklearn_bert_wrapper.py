@@ -239,7 +239,7 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
         check_is_fitted(self, ["model"])
 
         df_test = Dataset.from_pandas(
-            x_test.to_frame('text'), preserve_index=False)
+            pd.DataFrame({"text": x_test}), preserve_index=False)
         encoded_test = df_test.map(self._tokenize_batch, batched=True)
         encoded_test = encoded_test.remove_columns("text")
         encoded_test.set_format("torch")
