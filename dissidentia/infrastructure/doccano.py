@@ -8,8 +8,10 @@ import time
 
 import pandas as pd
 from tqdm import tqdm
-from doccano_client import DoccanoClient
-
+try:
+    from doccano_client import DoccanoClient
+except ModuleNotFoundError:
+    pass  # doccano_client not working on colab but not needed
 
 
 class DoccanoDataset:

@@ -23,7 +23,7 @@ def get_train_test_split(from_doccano=False):
         y_test (Series)
     """
 
-    dataset = pd.read_csv(os.path.join(get_rootdir(), "data/labels_v3.csv"))
+    dataset = pd.read_csv(os.path.join(get_rootdir(), "data/labels_v4.csv"))
     if from_doccano:
         dds = DoccanoDataset()
         dataset = dds.load_data()
