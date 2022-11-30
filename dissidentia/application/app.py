@@ -43,8 +43,8 @@ def results_page(file_model="baselineModel"):
     left_col, right_col = st.columns(2)
     left_col.image(os.path.join(get_rootdir(), "data/images/dissidentIA.png"))
 
-    right_col.markdown("# Projet 2")
-    right_col.markdown("### Proposition d'une application")
+    right_col.markdown("# DissidentIA")
+    right_col.markdown("### Détection de dissidents politiques dans les réponses au Grand Débat")
     right_col.markdown("**Créée par Charles, Amir et Moindzé**")
 
     st.markdown("---")
