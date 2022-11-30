@@ -21,14 +21,14 @@ cd dissidentia/
 Given a pretrained model, named nameModel.pkl and saved in the data/models directory, you can launch the application as follow:
 
 ```bash
-run dissidentia/application/app.py -- namedModel
+run dissidentia/application/app.py 
 ```
 
 ## Train 
 The train could be computed with the following commande line:
 
 ```bash
-python dissidentia/application/train.py --debug --doccano --save_model --no_fit --model namedModel
+python dissidentia/application/train.py
 ```
 
 ## Annotation
@@ -71,12 +71,6 @@ model.save(save_path)
 new_model = model.load(save_path)
 ```
 
-
-## tests
-Run packaging tests with pytest as follows:
-```bash
-python -m pytest -s tests/
-```
 
 ## Authors and acknowledgment
 Amir, Moindzé, Charles  
