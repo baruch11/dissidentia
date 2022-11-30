@@ -6,19 +6,43 @@
 ## Description
 Detect political dissidents from the answers of the Grand Débat
 
+## Get the sources
+```bash
+git clone git@gitlab.com:yotta-academy/mle-bootcamp/projects/dl-projects/project-2-fall-2022/dissidentia.git
+cd dissidentia/
+```
+
+## Setup instructions 
+```bash
+. activate.sh 
+```
+
+## Launch application
+Given a pretrained model, named nameModel.pkl and saved in the data/models directory, you can launch the application as follow:
+
+```bash
+run dissidentia/application/app.py -- namedModel
+```
+
+## Train 
+The train could be computed with the following commande line:
+
+```bash
+python dissidentia/application/train.py --debug --doccano --save_model --no_fit --model namedModel
+```
 
 ## Annotation
-
 We annotated the dataset through Quantmetry doccano's platform (https://qmdoccano.azurewebsites.net)
 
 To use a training set directly from doccano platform, you need to set the 
 2 environments variables *DOCCANO_LOGIN*, *DOCCANO_PASSWORD*.
 Then use the *-doccano* option in train.py command line.
 
-`python dissidentia/application/train.py --doccano`
+```bash
+python dissidentia/application/train.py --doccano 
+```
 
 ## Model 
-
 A scikit-learn wrapper to fine-tuning Bert type model using huggingface Trainer API for dissidentIA detection is proposed and can be used as follow:
 
 ```python3
@@ -46,17 +70,9 @@ model.save(save_path)
 # load model 
 new_model = model.load(save_path)
 ```
-## Application
-
-Given a pretrained model, named nameModel.pkl and saved in the data/models directory, you can run the application as follow:
-
-`run dissidentia/application/app.py -- namedModel` or 
-
-`run dissidentia/application/app.py ` to use the default model
 
 
 ## tests
-
 Run packaging tests with pytest as follows:
 ```bash
 python -m pytest -s tests/
