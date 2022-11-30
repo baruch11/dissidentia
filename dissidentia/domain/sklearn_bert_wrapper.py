@@ -25,25 +25,42 @@ class BaseBertTypeEstimator(BaseEstimator):
     ----------
     name_model : string, default = 'camembert-base'
         path file containing huggingface pre-trained model of type bert to load
+    output_dir:
+            output directory where the model predictions and checkpoints will be written.
     learning_rate :float, default = 3e-5
         inital learning rate for Optimizer
-    random_state : intt
-        seed to initialize numpy and torch random number generators
+    per_device_train_batch_size; defaults = 8
+            batch size per GPU/TPU core/CPU for training.
+    per_device_eval_batch_size, defaults, = 8:
+            The batch size per GPU/TPU core/CPU for evaluation.
     num_labels : int, default = 2
         number of labels for classification
-    weight_decay : float, default = 0.
-        regularization technique by adding a small penalty
-    tokenizer ([`PreTrainedTokenizerBase`], *optional*):
+    val_dataset = (x_val, y_val) : 
+        dataset to evaluate the model
+    weight_decay: 
+        The weight decay to apply (if not zero) to all layers except all bias and LayerNorm weights in AdamW
+            optimizer type.
+    logging_first_step, default:
+            Whether to log and evaluate the first `global_step` or not.
+    freezing:
+            freezing or no the pre-trained model.
+    num_train_epochs:
+            number of epoch for the train 
+            the evaluation with or without the prefix `"eval_"`.
+    metric_for_best_model:
+            specify the metric to use. Must be the name of a metric returned by
+            the evaluation with or without the prefix `"eval_"`.
+    save_strategy :
+            The checkpoint save strategy to adopt during training. Possible values are:
+                - "no": No save is done during training.
+                - "epoch": Save is done at the end of each epoch.
+                - "steps": Save is done every `save_steps.
+    tokenizer:
             The tokenizer used to preprocess the data. If provided, will be used to automatically pad the inputs the
             maximum length when batching inputs, and it will be saved along the model to make it easier to rerun an
             interrupted training or reuse the fine-tuned model.
-    args ([`TrainingArguments`], *optional*):
-            The arguments to tweak for training. Will default to a basic instance of [`TrainingArguments`] with the
-            `output_dir` set to a directory named *tmp_trainer* in the current directory if not provided.
-    data_collator (`DataCollator`, *optional*):
-            The function to use to form a batch from a list of elements of `train_dataset` or `eval_dataset`. Will
-            default to [`default_data_collator`] if no `tokenizer` is provided, an instance of
-            [`DataCollatorWithPadding`] otherwise.
+    data_collator:
+            The function to use to form a batch from a list of elements of `train_dataset` or `val_dataset`.
 
     """
 
@@ -52,19 +69,19 @@ class BaseBertTypeEstimator(BaseEstimator):
 
     def __init__(
         self,
-        name_model: str ='camembert-base',
+        name_model: str = 'camembert-base',
         output_dir: str = OUTPUT_DIR,
         logging_dir: str = LOG_DIR,
-        num_labels : int = 2,
-        evaluation_strategy : str = "epoch",
+        num_labels: int = 2,
+        evaluation_strategy: str = "epoch",
         learning_rate: float = 3e-5,
-        per_device_train_batch_size: int = 16,
-        per_device_eval_batch_size: int = 16,
+        per_device_train_batch_size: int = 8,
+        per_device_eval_batch_size: int = 8,
         num_train_epochs: int = 10,
         logging_first_step: bool = True,
         freezing: bool = False,
         weight_decay: float = 0.,
-        load_best_model_at_end : bool = True,
+        load_best_model_at_end: bool = True,
         metric_for_best_model: str = 'f1',
         save_strategy: str = "epoch",
         val_dataset=None
