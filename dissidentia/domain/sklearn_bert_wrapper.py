@@ -65,7 +65,8 @@ class BaseBertTypeEstimator(BaseEstimator):
     """
 
     LOG_DIR = os.path.join(get_rootdir(), "logs")
-    OUTPUT_DIR = os.path.join(get_rootdir(), "data/")
+    OUTPUT_DIR = os.path.join(get_rootdir(), "data/outputs")
+
 
     def __init__(
         self,
@@ -106,8 +107,8 @@ class BaseBertTypeEstimator(BaseEstimator):
         self.model = None
         self.val_dataset = val_dataset
 
-        self.train_args = TrainingArguments(
-            output_dir=f"{self.output_dir}{name_model}_finetuned",
+        self.args = TrainingArguments(
+            output_dir=self.output_dir,
             logging_dir=self.logging_dir,
             evaluation_strategy=self.evaluation_strategy,
             save_strategy=self.save_strategy,
@@ -192,7 +193,7 @@ class BaseBertTypeEstimator(BaseEstimator):
         data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
         trainer = Trainer(
             self.model,
-            args=self.train_args,
+            self.args,
             train_dataset=encoded_train,
             eval_dataset=encoded_val,
             data_collator=data_collator,
