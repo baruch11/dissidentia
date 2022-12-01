@@ -83,16 +83,15 @@ def results_page(file_model="BertTypeClassifier"):
         st.markdown("##### Prédictions")
         st.table(df)
 
-        st.markdown("##### Explication des prédictions")
-        with st.spinner("Generating explanations"):
-            explainer = LimeTextExplainer(
-                class_names=pd.DataFrame([False, True]))
-            for j in range(len(result)):
-                text = result[j][0]
-                exp = explainer.explain_instance(
-                    text, model.model.predict_proba, num_features=6
-                )
-                components.html(exp.as_html(), height=320)
+        if st.button("Explication des prédictions"):
+            with st.spinner("Generating explanations"):
+                explainer = LimeTextExplainer(
+                    class_names=pd.DataFrame([False, True]))
+                for j in range(len(result)):
+                    text = result[j][0]
+                    exp = explainer.explain_instance(
+                        text, model.model.predict_proba, num_features=6)
+                    components.html(exp.as_html(), height=320)
 
 
 if __name__ == "__main__":
