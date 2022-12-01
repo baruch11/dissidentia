@@ -85,7 +85,8 @@ def results_page(file_model="BertTypeClassifier"):
 
         st.markdown("##### Explication des prédictions")
         with st.spinner("Generating explanations"):
-            explainer = LimeTextExplainer(class_names=model.model.classes_)
+            explainer = LimeTextExplainer(
+                class_names=pd.DataFrame([False, True]))
             for j in range(len(result)):
                 text = result[j][0]
                 exp = explainer.explain_instance(
