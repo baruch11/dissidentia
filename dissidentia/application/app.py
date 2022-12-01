@@ -37,7 +37,7 @@ class Application:
         page["name_page"]
 
 
-def results_page(file_model="baselineModel"):
+def results_page(file_model="BertTypeClassifier"):
     """The main page of the application"""
     st.set_page_config(layout="wide")
     left_col, right_col = st.columns(2)
@@ -96,6 +96,6 @@ def results_page(file_model="baselineModel"):
 
 if __name__ == "__main__":
     app = Application()
-    page = results_page(*sys.argv[1:])
+    page = results_page(sys.argv[1])
     app.add_page("Resultats", page)
     app.run()
