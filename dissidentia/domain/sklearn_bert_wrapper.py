@@ -248,7 +248,7 @@ class BertTypeClassifier(BaseBertTypeEstimator, ClassifierMixin):
 
         out = trainer.predict(encoded_test)
         out_torch = torch.from_numpy(out.predictions)
-        pred_prob = torch.softmax(out_torch, -1).squeeze()
+        pred_prob = torch.softmax(out_torch, -1)
 
         return pred_prob.numpy()
 
