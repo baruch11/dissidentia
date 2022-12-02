@@ -21,7 +21,11 @@ cd dissidentia/
 Given a pretrained model, named nameModel.pkl and saved in the data/models directory, you can launch the application as follow:
 
 ```bash
-streamlit run dissidentia/application/app.py 
+streamlit run dissidentia/application/app.py BertTypeClassifier
+
+# For a demo with a faster interpretability use baselineModel
+streamlit run dissidentia/application/app.py baselineModel
+
 ```
 
 ## Train 

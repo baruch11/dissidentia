@@ -49,16 +49,16 @@ def results_page(file_model="BertTypeClassifier"):
 
     st.markdown("---")
 
-    st.markdown("### Résultats")
+    #st.markdown("### Résultats")
 
     with st.form(key="my_form"):
 
-        sample = "trop de services qui se superposent à différents échelons départementales, régionales, nationales. Aucune économie possible ne peut se réaliser. Son utilité est nulle ou presque. Par exemple, l'intercommunalité serait à revoir, la commune perd son âme au détriment de tous ces nouveaux services et nos impôts augmentent pour financer cette structure"
+        sample = "C'est vraiment nul ! Je suggère de simplifier tout ça."
         message_text = st.text_area(
             "Entrer la reponse à évaluer",
             sample,
-            height=200,
-            help=" Une reponse issue du dataset du grand débat ",
+            height=100,
+            help=" Une reponse issue du dataset du grand débat "
         )
 
         submit_button = st.form_submit_button(label="Submit")
