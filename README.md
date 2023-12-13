@@ -93,8 +93,6 @@ model.save(save_path)
 new_model = model.load(save_path)
 ```
 
-
-
 ## Tests
 
 ```
@@ -104,6 +102,12 @@ pytest
 # test camembert model fit/predict/save/load methods on few samples
 pytest -o python_functions="camembert_*" -s
 ```
+
+## AI Risks analysis with Giskard
+
+The algorithm has been analyzed with Giskard (https://www.giskard.ai/)
+
+[giskard report](./notebooks/giskard_scan_report.html)
 
 
 ## Authors and acknowledgment
