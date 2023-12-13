@@ -6,15 +6,13 @@
 ## Description
 Detect political dissidents from the answers of the Grand Débat
 
-## Get the sources
-```bash
-git clone git@gitlab.com:yotta-academy/mle-bootcamp/projects/dl-projects/project-2-fall-2022/dissidentia.git
-cd dissidentia/
-```
 
 ## Setup instructions 
+
+Create a virtual environment in .venv at the root of the project
+
 ```bash
-. activate.sh 
+poetry install
 ```
 
 ## Launch application
