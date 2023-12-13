@@ -4,7 +4,10 @@
 
 
 ## Description
-Detect political dissidents from the answers of the Grand Débat
+
+This language model has the capability to identify political dissidents from a large dataset comprised of responses to surveys like the "Grand Debat" conducted in France in 2019.
+
+The model has been trained on approximately 1000 examples extracted from the Grand Debat. These examples were labeled by three authentic dictators (Amir, Charles-Henri, Moindze) according to the predefined guidelines mentioned in the [annotation guidelines.md](./annotation_guidelines.md) document.
 
 
 ## Setup instructions 
@@ -15,7 +18,24 @@ Create a virtual environment in .venv at the root of the project
 poetry install
 ```
 
-## Launch application
+## Basic python example
+
+```
+from dissidentia.domain.model_wrapper import DissidentModelWrapper
+
+# model BertClassifier is supposed to be already trained and saved (See "Train" section) 
+model = DissidentModelWrapper.load("BertTypeClassifier").model
+model.predict(["Bravo à nos dirigeants pour cet excellent travail !!.",
+               "Ce gouvernement est vraiment nul!",
+               "Tous des pourris. Démission !!"])
+```
+Results
+```
+array([False,  True,  True])
+```
+
+
+## Run model through the streamlit application
 Given a pretrained model, named nameModel.pkl and saved in the data/models directory, you can launch the application as follow:
 
 ```bash
